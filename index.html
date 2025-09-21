@@ -29,10 +29,24 @@
             margin: 20px 0;
         }
     </style>
-    <!-- Add this script to clear localStorage on page load -->
     <script>
-        // Clear all localStorage data when the page loads
+        // Clear localStorage IMMEDIATELY when page loads
         localStorage.clear();
+        
+        // After iframes load, clear AGAIN to catch any data they might write
+        document.addEventListener('DOMContentLoaded', () => {
+            const iframes = document.querySelectorAll('iframe');
+            iframes.forEach(iframe => {
+                iframe.onload = () => {
+                    try {
+                        // Same-origin policy allows this since all are from same GitHub Pages domain
+                        localStorage.clear();
+                    } catch (e) {
+                        console.error('Could not clear iframe storage:', e);
+                    }
+                };
+            });
+        });
     </script>
 </head>
 <body>
